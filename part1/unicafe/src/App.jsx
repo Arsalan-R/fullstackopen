@@ -5,6 +5,16 @@ const Button = (props) => {
   <button onClick={props.fbHandler}>{props.btnName}</button>
 )}
 
+const StatisticLine = (props) =>{
+  return(
+  <tr>
+    <td>{props.text}:</td>
+    <td>{props.value}</td>
+  </tr>
+
+  )
+}
+
 const Statistics = (props) => {
   if(props.total === 0)
   {
@@ -12,14 +22,16 @@ const Statistics = (props) => {
   }
   else{
     return(
-      <div>
-      <p>Good:  {props.good}</p>
-      <p>Neutral:  {props.neutral}</p>
-      <p>Bad:  {props.bad}</p>
-      <p>All:  {props.total}</p>
-      <p>Average {(props.good * 1 + props.neutral * 0 + props.bad * -1) / props.total}</p>
-      <p>Positive {props.good /props.total * 100} </p>
-      </div>
+      <table>
+        <tbody>
+        <StatisticLine text="Good" value={props.good} />
+        <StatisticLine text="Neutral" value={props.neutral} />
+        <StatisticLine text="Bad" value={props.bad} />
+        <StatisticLine text="All" value={props.total} />
+        <StatisticLine text="Average" value={(props.good * 1 + props.bad * -1) / props.total} />
+        <StatisticLine text="Positive" value={props.good /props.total * 100} />
+        </tbody>
+      </table>
     )
   }
 }
