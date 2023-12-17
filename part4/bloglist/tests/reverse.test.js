@@ -1,5 +1,5 @@
 const listHelper = require('../utils/list_helper.js')
-const Allblogs = require('./blogs.js') // get the lists of blogs
+const Allblogs = require('./dummy_blogs.js') // get the lists of blogs
 
 test('dummy returns one', () => {
   const blogs = []
@@ -39,7 +39,6 @@ test('if there is no item return not found', () => {
   const result = listHelper.favoriteBlog([])
   expect(result).toEqual('not found')
 })
-
 })
 
 describe('the author with most blogs', () => {
@@ -65,7 +64,7 @@ describe('the author with most likes', () => {
   })
   })
   test('if there is no blog return not found', () => {
-    const result = listHelper.mostBlogs([])
+    const result = listHelper.mostLikes([])
     expect(result).toEqual('not found')
   })
   })
