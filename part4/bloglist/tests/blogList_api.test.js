@@ -13,6 +13,7 @@ beforeEach(async () => {
 }, 1000000);
 
 //4.8
+describe('get request tests', () => {
 test('all blogs are returned as json', async () => {
   await api
     .get('/api/blogs')
@@ -28,8 +29,10 @@ test('all the blogs have a unique identifier (id)', async () => {
     expect(blog.id).toBeDefined()
   }
 },100000)
+})
 
 //4.10
+describe('post request tests', () => {
 test('can post a blog', async () => {
   const newBlog = {
     "title": "delete soon",
@@ -93,9 +96,10 @@ test('if url or title is missing, does not get added', async () => {
   expect(res.body).toHaveLength(helper.initialBlogs.length)
 
 },1000000)
+})
 
 //4.13
-describe('deleting posts', () => {
+describe('delete request tests', () => {
   test('deletes a particular post', async () => {
     const blogsAtStart = await helper.blogsInDb() 
     const blogToDelete = blogsAtStart[0]  
@@ -123,9 +127,52 @@ describe('deleting posts', () => {
     await api
     .delete(`/api/blogs/${blogToDelete.id}`)
     .expect(204)
-
   }, 1000000)
   })
+
+//4.14
+describe('put request tests', () => {
+  test('updates a particular post', async () => {
+    const blogsAtStart = await helper.blogsInDb() 
+    const blogTochange = blogsAtStart[0]  
+    
+    const updatedBlog = {
+      title: 'title updated',
+      author: 'author updated',
+      url: 'url updated',
+      likes: 100,   
+  }
+
+    await api
+    .put(`/api/blogs/${blogTochange.id}`)
+    .send(updatedBlog)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    const titles = blogsAtEnd.map(r => r.title)
+    expect(titles).toContain(updatedBlog.title)
+  }, 100000)
+
+  test('if title or url is not valid it returns an error', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogTochange = blogsAtStart[0]
+    const updatedBlog = {
+      title: 'title updated',
+      author: 'author updated',
+      url: null, //not valid
+      likes: 100,   
+  }
+  await api
+  .put(`/api/blogs/${blogTochange.id}`)
+  .send(updatedBlog)
+  .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  const titles = blogsAtEnd.map(r => r.title)
+  expect(titles).not.toContain(updatedBlog.title)
+  })
+})
 
 afterAll(async () => {
     await mongoose.connection.close();
