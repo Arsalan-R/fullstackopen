@@ -94,6 +94,39 @@ test('if url or title is missing, does not get added', async () => {
 
 },1000000)
 
+//4.13
+describe('deleting posts', () => {
+  test('deletes a particular post', async () => {
+    const blogsAtStart = await helper.blogsInDb() 
+    const blogToDelete = blogsAtStart[0]  
+    
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+    
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length - 1
+    )
+    const titles = blogsAtEnd.map(r => r.title)
+    expect(titles).not.toContain(blogToDelete.title)
+  }, 100000)
+
+  test('if an id was already deleted, sends 204 no content', async () => {
+    const blogsAtStart = await helper.blogsInDb() 
+    const blogToDelete = blogsAtStart[0]  
+    
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  }, 1000000)
+  })
+
 afterAll(async () => {
     await mongoose.connection.close();
   });
