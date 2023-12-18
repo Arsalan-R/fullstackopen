@@ -42,7 +42,6 @@ const mostLikes = (blogs) =>{
     if (blogs.length > 0){
         const authors = _.groupBy(blogs, 'author')
         const sumOfLikes = _.mapValues(authors, (blogs) => _.sumBy(blogs, (blog) => blog.likes))
-        console.log(sumOfLikes);
         const biggestLike = _.maxBy(Object.entries(sumOfLikes), ([author, likes]) => likes)
         const result = {
             author: biggestLike[0],
