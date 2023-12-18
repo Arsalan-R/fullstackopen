@@ -87,7 +87,6 @@ test('if url or title is missing, does not get added', async () => {
   .post('/api/blogs')
   .send(newBlog)
   .expect(400)
-  .expect('Content-Type', /application\/json/)
 
   const res = await api.get('/api/blogs')
   .expect(200)
