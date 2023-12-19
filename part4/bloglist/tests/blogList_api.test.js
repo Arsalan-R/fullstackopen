@@ -3,11 +3,12 @@ const supertest = require('supertest');
 const api = supertest(app);
 const helper = require('./test_helper');
 const mongoose = require('mongoose');
-
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 beforeEach(async () => {
     await Blog.deleteMany({});
+    await User.deleteMany({});
     console.log('cleared');
     await Blog.insertMany(helper.initialBlogs);
 }, 1000000);
@@ -33,7 +34,21 @@ test('all the blogs have a unique identifier (id)', async () => {
 
 //4.10
 describe('post request tests', () => {
+beforeEach(async () => {
+
+const validUser = {
+    'username': 'valid',
+    'name': 'should be added',
+    'password': 'valid'
+} 
+await api
+.post('/api/users')
+.send(validUser)
+.expect(201)
+})
+
 test('can post a blog', async () => {
+
   const newBlog = {
     "title": "delete soon",
     "author": "delete soon",
@@ -41,8 +56,14 @@ test('can post a blog', async () => {
     "likes": 0,
   } 
 
+
+const result = await api
+.post('/api/login')
+.send({'username': 'valid', 'password': 'valid'})
+
   await api
   .post('/api/blogs')
+  .set({Authorization: 'Bearer ' + result.body.token})
   .send(newBlog)
   .expect(201)
   .expect('Content-Type', /application\/json/)
@@ -57,6 +78,7 @@ test('can post a blog', async () => {
     'delete soon')
 }, 100000 )
 
+
 //4.11
 test('like defaults to zero', async () => {
   const newBlog = {
@@ -65,8 +87,13 @@ test('like defaults to zero', async () => {
     "url": "to zero",
   } 
 
+const result = await api
+.post('/api/login')
+.send({'username': 'valid', 'password': 'valid'})
+
   await api
   .post('/api/blogs')
+  .set({Authorization: 'Bearer ' + result.body.token})
   .send(newBlog)
   .expect(201)
   .expect('Content-Type', /application\/json/)
@@ -86,8 +113,13 @@ test('if url or title is missing, does not get added', async () => {
     "author": "forgot the url"
   } 
 
+const result = await api
+.post('/api/login')
+.send({'username': 'valid', 'password': 'valid'})
+
   await api
   .post('/api/blogs')
+  .set({Authorization: 'Bearer ' + result.body.token})
   .send(newBlog)
   .expect(400)
 
@@ -96,6 +128,29 @@ test('if url or title is missing, does not get added', async () => {
   expect(res.body).toHaveLength(helper.initialBlogs.length)
 
 },1000000)
+
+test('can not add a blog if unauthorized', async () =>{
+  const newBlog = {
+    "title": "i'm not authorized",
+    "author": "i'm not authorized",
+    "url": "i'm not authorized",
+    "likes": 0,
+  } 
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(401)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+
+  const titles = blogsAtEnd.map(r => r.title)
+
+  expect(titles).not.toContain(
+    "i'm not authorized")
+}, 100000 )
 })
 
 //4.13
@@ -176,4 +231,4 @@ describe('put request tests', () => {
 
 afterAll(async () => {
     await mongoose.connection.close();
-  });
+  }, 100000);
