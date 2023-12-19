@@ -8,6 +8,7 @@ const User = require('../models/user');
 beforeEach(async () => {
     await User.deleteMany({});
     console.log('cleared');
+    await User.insertMany(helper.initialUsers);
 }, 1000000);
 
 describe('valid users', () => {
@@ -24,8 +25,9 @@ describe('valid users', () => {
     
         const usersAtEnd = await helper.usersInDb()
         
-        expect(usersAtEnd).toHaveLength(1)
-        expect(usersAtEnd[0].username).toContain(validUser.username)
+        expect(usersAtEnd).toHaveLength(helper.initialUsers.length + 1)
+        const userNames = usersAtEnd.map(r => r.username)
+        expect(userNames).toContain(validUser.username)
         
     })
 })
@@ -44,7 +46,7 @@ test('username must be at least 3 characters long', async () => {
 
     const usersAtEnd = await helper.usersInDb()
     
-    expect(usersAtEnd).toHaveLength(0)
+    expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
     expect(usersAtEnd).not.toContain(invalidUser.username)
     
 })
@@ -61,7 +63,7 @@ test('password must be at least 3 characters long', async () => {
 
     const usersAtEnd = await helper.usersInDb()
     
-    expect(usersAtEnd).toHaveLength(0)
+    expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
     expect(usersAtEnd).not.toContain(invalidUser.username)
     
 })
