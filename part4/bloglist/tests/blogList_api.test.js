@@ -102,7 +102,6 @@ const result = await api
   .expect(200)
 
   const checkBlog = res.body.find(r => r.title === 'default')
-  console.log(res.body);
   expect(checkBlog.likes).toBe(0)
 },1000000)
 
@@ -156,33 +155,48 @@ test('can not add a blog if unauthorized', async () =>{
 //4.13
 describe('delete request tests', () => {
   test('deletes a particular post', async () => {
-    const blogsAtStart = await helper.blogsInDb() 
-    const blogToDelete = blogsAtStart[0]  
-    
+
+    const validUser = {
+      'username': 'valid',
+      'name': 'should be added',
+      'password': 'valid'
+  } 
+  await api
+  .post('/api/users')
+  .send(validUser)
+  .expect(201)
+
+  const newBlog = {
+    "title": "delete soon",
+    "author": "delete soon",
+    "url": "delete soon",
+    "likes": 0,
+  }
+
+const result = await api
+.post('/api/login')
+.send({'username': 'valid', 'password': 'valid'})
+
+ const resp =  await api
+  .post('/api/blogs')
+  .set({Authorization: 'Bearer ' + result.body.token})
+  .send(newBlog)
+  .expect(201)
+  .expect('Content-Type', /application\/json/)
+
     await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
+    .delete(`/api/blogs/${resp.body.id}`)
+    .set({Authorization: 'Bearer ' + result.body.token})
     .expect(204)
     
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(
-      helper.initialBlogs.length - 1
+      helper.initialBlogs.length
     )
     const titles = blogsAtEnd.map(r => r.title)
-    expect(titles).not.toContain(blogToDelete.title)
+    expect(titles).not.toContain(resp.body.title)
   }, 100000)
 
-  test('if an id was already deleted, sends 204 no content', async () => {
-    const blogsAtStart = await helper.blogsInDb() 
-    const blogToDelete = blogsAtStart[0]  
-    
-    await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
-
-    await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
-  }, 1000000)
   })
 
 //4.14
