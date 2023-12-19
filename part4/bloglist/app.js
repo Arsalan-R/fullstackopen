@@ -7,7 +7,7 @@ require('dotenv').config();
 const middleware = require('./utils/middleware')
 
 const loginRouter = require('./controllers/login')
-const blogRouter = require('./controllers/blogs')
+const blogsRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
 
 const {MONGODB_URI} = require('./utils/config')
@@ -18,7 +18,7 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExatractor)
 
-app.use('/api/blogs', blogRouter)
+app.use('/api/blogs', blogsRouter)
 app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 
