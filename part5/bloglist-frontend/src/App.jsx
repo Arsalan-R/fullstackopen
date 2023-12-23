@@ -129,6 +129,7 @@ const App = () => {
   }
 
 const deletingBlog = async(blogObject) => {
+  if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.user.name}`)){
   try{
   await blogService.deleteBlog(blogObject)
   setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
@@ -142,7 +143,7 @@ const deletingBlog = async(blogObject) => {
       setErrorM('')
     }, 5000);
   }
-}
+}}
 
   const blogFormRef = useRef()
   const blogPage = () => {
