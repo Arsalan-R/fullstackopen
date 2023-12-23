@@ -11,9 +11,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const[title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  
 
   const [successM, setSuccesM] = useState('')
   const [errorM, setErrorM] = useState('')
@@ -92,14 +90,9 @@ const App = () => {
     )
   }
 
-  const createNewBlog = async (event) => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try{
-    const newBlog = await blogService.create({
-      title,
-      author,
-      url
-    })
+    const newBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(newBlog))
     setSuccesM(`A new blog "${newBlog.title}" by "${newBlog.author}" added`)
     setTimeout(() => {
@@ -118,13 +111,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <p>{user.username} is logged in</p> <button onClick={logout}>Logout</button>
-        <BlogForm 
-        title={title} author={author} url={url}
-        handleSubmit={createNewBlog}
-        handleTitle={({target}) => setTitle(target.value)} 
-        handleAuthor={({target}) => setAuthor(target.value)}
-        handleUrl={({target}) => setUrl(target.value)}
-        />
+        <BlogForm createBlog={addBlog} />
         {blogs.map(blog =>
           <Blog key={blog.id} blog={blog} />
         )}
