@@ -22,7 +22,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>{
-      function compareNumbers(a, b) {
+      const compareNumbers = (a, b) => {
         return a.likes - b.likes;
       }
       const sortedBlogs = blogs.sort(compareNumbers)
