@@ -115,14 +115,34 @@ const App = () => {
   }
   }
 
-  const likedBlog = async (blogObject) => {
+  const likingBlog = async (blogObject) => {
     const { user, id, ...rest } = blogObject; 
     const newBlogObject = rest; 
     const likedData = await blogService.update(newBlogObject, id); 
     const liked = {...likedData, user, id}
     const newBlogs = blogs.map(blog => blog.id === blogObject.id? blog = liked : blog)
-    setBlogs(newBlogs)
+    const compareNumbers = (a, b) => {
+      return a.likes - b.likes;
+    }
+    const sortedBlogs = newBlogs.sort(compareNumbers) //live update for the likes
+    setBlogs(sortedBlogs)
   }
+
+const deletingBlog = async(blogObject) => {
+  try{
+  await blogService.deleteBlog(blogObject)
+  setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+  setSuccesM('Successfully removed the blog!')
+  setTimeout(() => {
+    setSuccesM('')
+  }, 5000);
+  } catch {
+    setErrorM('You are not authorized to delete this blog')
+    setTimeout(() => {
+      setErrorM('')
+    }, 5000);
+  }
+}
 
   const blogFormRef = useRef()
   const blogPage = () => {
@@ -133,7 +153,7 @@ const App = () => {
         <Toggleable buttonLable={'New blog'} HideLable={'cancel'} ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
         </Toggleable>
-        {blogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={likedBlog}/>     
+        {blogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={likingBlog} removeBlog={deletingBlog}/>     
         )}
       </div>
     )
