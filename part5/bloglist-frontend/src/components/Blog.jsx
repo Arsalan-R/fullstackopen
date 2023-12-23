@@ -2,14 +2,25 @@ import { useState } from "react"
 
 const Blog = ({ blog }) => {
 
-const changeName = () => {
-  buttonLable === 'View' ? setButtonLable('Hide') : setButtonLable('View')
+  const [buttonLable, setButtonLable] = useState('show')
+  const [visible, setVisible] = useState(false)
+
+  const changeVisibility = () => {
+    setVisible(!visible)
+    setButtonLable(visible? 'show' : 'hide')
 }
 
-  const [buttonLable, setButtonLable] = useState('View')
+const hideOrShow = {display : visible? '' : 'none'}
+
+
 return(
-  <div>
-    {blog.title} {blog.author} {blog.likes} {blog.url} {blog.user ? blog.user.name : ''}
+  <div className="blog">
+    {blog.title} {blog.author} <button onClick={changeVisibility}>{buttonLable}</button> 
+    <div style={hideOrShow}>
+      <div>url: {blog.url}</div>
+      <div>likes: {blog.likes} <button>like</button></div>
+      <div>name: {blog.user ? blog.user.name : 'Unkown'}</div>
+    </div>
   </div>  
 )
 }
