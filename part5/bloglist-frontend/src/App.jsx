@@ -27,7 +27,7 @@ const App = () => {
       }
       const sortedBlogs = blogs.sort(compareNumbers)
       setBlogs( sortedBlogs )
-  })  
+  }).catch(error => console.log('refreshed before receiving data'))
   }, [])
 
   const handleLogin = async (event) => {
@@ -154,7 +154,7 @@ const deletingBlog = async(blogObject) => {
         <Toggleable buttonLable={'New blog'} HideLable={'cancel'} ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
         </Toggleable>
-        {blogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={likingBlog} removeBlog={deletingBlog}/>     
+        {blogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={likingBlog} removeBlog={deletingBlog} username={user.username}/>     
         )}
       </div>
     )
