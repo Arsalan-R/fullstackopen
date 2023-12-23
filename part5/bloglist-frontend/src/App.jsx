@@ -21,9 +21,13 @@ const App = () => {
   
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(blogs =>{
+      function compareNumbers(a, b) {
+        return a.likes - b.likes;
+      }
+      const sortedBlogs = blogs.sort(compareNumbers)
+      setBlogs( sortedBlogs )
+  })  
   }, [])
 
   const handleLogin = async (event) => {
@@ -97,8 +101,9 @@ const App = () => {
     blogFormRef.current.changeVisibility()
     try{
     const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog))
-    setSuccesM(`A new blog "${newBlog.title}" by "${newBlog.author}" added`)
+    const newBlogWithUser = {...newBlog, user}
+    setBlogs(blogs.concat(newBlogWithUser))
+    setSuccesM(`A new blog "${newBlog.title}" by "${user.name}" added`)
     setTimeout(() => {
       setSuccesM('')
     }, 5000);
@@ -110,6 +115,15 @@ const App = () => {
   }
   }
 
+  const likedBlog = async (blogObject) => {
+    const { user, id, ...rest } = blogObject; 
+    const newBlogObject = rest; 
+    const likedData = await blogService.update(newBlogObject, id); 
+    const liked = {...likedData, user, id}
+    const newBlogs = blogs.map(blog => blog.id === blogObject.id? blog = liked : blog)
+    setBlogs(newBlogs)
+  }
+
   const blogFormRef = useRef()
   const blogPage = () => {
     return (
@@ -119,8 +133,7 @@ const App = () => {
         <Toggleable buttonLable={'New blog'} HideLable={'cancel'} ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
         </Toggleable>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />     
+        {blogs.map(blog => <Blog key={blog.id} blog={blog} likeBlog={likedBlog}/>     
         )}
       </div>
     )
