@@ -54,3 +54,17 @@ test('blog\'s URL and number of likes are shown when the button controlling the 
   expect(url).toBeVisible()
 
 })
+
+//5.15
+test('if the like button is clicked twice, the event handler the component received as props is called twice.', async () => {
+  render(<Blog blog={mockBlog} likeBlog={mockLikeBlog} removeBlog={mockRemoveBlog} username={mockUsername} />)
+
+  const user = userEvent.setup()
+  const button = screen.getByText('show')
+  await user.click(button)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+  expect(mockLikeBlog.mock.calls).toHaveLength(2)
+})
