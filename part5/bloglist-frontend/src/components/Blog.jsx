@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types'
-
 import { useState } from 'react'
 
 const Blog = ({ blog, likeBlog, removeBlog, username }) => {
-
   const [buttonLable, setButtonLable] = useState('show')
   const [visible, setVisible] = useState(false)
 
@@ -20,8 +18,10 @@ const Blog = ({ blog, likeBlog, removeBlog, username }) => {
 
   return(
     <div className="blog">
-      {blog.title} {blog.author} <button onClick={changeVisibility}>{buttonLable}</button>
-      <div style={hideOrShow}>
+      <div className='title'>
+        {blog.title} {blog.author} <button onClick={changeVisibility}>{buttonLable}</button>
+      </div>
+      <div style={hideOrShow} className='moreInfo'>
         <div>url: {blog.url}</div>
         <div>likes: {blog.likes} <button onClick={() => addlike(blog)}>like</button></div>
         <div>name: {blog.user ? blog.user.name : 'Unkown'}</div>
