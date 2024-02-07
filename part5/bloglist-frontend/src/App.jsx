@@ -81,12 +81,14 @@ const App = () => {
             <input type='text'
               value={username}
               name='username'
+              id='username'
               onChange={({ target }) => setUsername(target.value)} />
           </div>
           <div>
             <input type='password'
               value={password}
               name='username'
+              id='password'
               onChange={({ target }) => setPassword(target.value)} />
           </div>
           <div>
