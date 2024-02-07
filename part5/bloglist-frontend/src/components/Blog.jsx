@@ -23,7 +23,7 @@ const Blog = ({ blog, likeBlog, removeBlog, username }) => {
       </div>
       <div style={hideOrShow} className='moreInfo'>
         <div>url: {blog.url}</div>
-        <div>likes: {blog.likes} <button onClick={() => addlike(blog)}>like</button></div>
+        <div>likes: {blog.likes} <button id="like" onClick={() => addlike(blog)}>like</button></div>
         <div>name: {blog.user ? blog.user.name : 'Unkown'}</div>
         {username === blog.user.username? <button onClick={() => removeBlog(blog)}>Remove</button> : null}
       </div>

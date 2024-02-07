@@ -25,8 +25,8 @@ describe('Blog app', function() {
     })
 
     it('fails with wrong credentials', function() {
-      cy.get('#username').type('random')
-      cy.get('#password').type('random')
+      cy.get('#username').type('wrong')
+      cy.get('#password').type('wrong')
       cy.contains('log in').click()
       cy.contains('wrong credentials')
     })
@@ -75,7 +75,7 @@ describe('Blog app', function() {
     })
 
     //5.22
-    it.only('a user can only see the delete button of his own', function(){
+    it('a user can only see the delete button of his own', function(){
       cy.contains('New blog').click()
       cy.get('.title').type('something')
       cy.get('.author').type('someone')
@@ -89,6 +89,28 @@ describe('Blog app', function() {
       cy.contains('log in').click()
       cy.contains('show').click()
       cy.contains('Remove').should('not.exist')
-    } )
+    })
+
+    //5.23
+    it('a user can only see the delete button of his own', function(){
+      cy.contains('New blog').click()
+      cy.get('#title').type('most likes')
+      cy.get('.author').type('someone')
+      cy.get('.url').type('somewhere')
+      cy.get('.create').click()
+      cy.wait(3000)
+      cy.contains('New blog').click()
+      cy.get('#title').type('least likes')
+      cy.get('.author').type('someone2')
+      cy.get('.url').type('somewhere')
+      cy.get('.create').click()
+      cy.wait(3000)
+      cy.get('.blog').eq(0).should('contain', 'most likes')
+      cy.get('.blog').eq(1).should('contain', 'least likes')
+      cy.contains('show').eq(0).click()
+      cy.get('#like').click()
+      cy.get('.blog').eq(0).should('contain', 'least likes')
+      cy.get('.blog').eq(1).should('contain', 'most likes')
+    })
   })
 })
