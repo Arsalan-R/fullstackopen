@@ -38,18 +38,19 @@ const reducer = (state = initialState, action) => {
       return state.concat(objectAne)
     }
   }
-
+  
   return state
 }
 
-export const voting = (id) => { //6.3
+
+export const voting = (id) => { //6.3 and 6.6
   return {
     type: 'VOTE',
     payload: {id}
   }
 }
 
-export const createAne = (anecdote) => { //6.4
+export const createAne = (anecdote) => { //6.4 and 6.6
   return {
     type: 'NEW-ANECDOTE',
     payload: {anecdote}
