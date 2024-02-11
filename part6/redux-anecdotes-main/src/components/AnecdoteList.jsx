@@ -13,10 +13,11 @@ const Anecdotes = () => {
     })
     const dispatch = useDispatch()
 
+    
     const compareVotes = (a,b) => {
         return a.votes - b.votes
       }
-      const sortedAnecdotes = anecdotes.sort(compareVotes) //6.5    
+      const sortedAnecdotes = [...anecdotes].sort(compareVotes) //6.5    
 
     const vote = (id) => {
         dispatch(voting(id))
