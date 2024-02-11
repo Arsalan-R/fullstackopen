@@ -5,11 +5,13 @@ import filterReducer from './reducers/filterReducer'
 import { Provider } from 'react-redux'
 import App from './App'
 import aneReducer from './reducers/anecdoteReducer'
+import notificationReducer from './reducers/notificationReducer'
 
 const store = configureStore({
   reducer: {
     anecdote : aneReducer,
-    filter: filterReducer
+    filter: filterReducer,
+    notification: notificationReducer
   }
 })
 
