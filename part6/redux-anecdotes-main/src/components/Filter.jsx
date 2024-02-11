@@ -6,6 +6,7 @@ const Filter = () => {
     
     const handleChange = (event) => {
       dispatch(search(event.target.value))
+      
     }
     const style = {
       marginBottom: 10
