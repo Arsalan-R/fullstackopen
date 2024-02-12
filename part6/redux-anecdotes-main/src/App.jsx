@@ -10,7 +10,10 @@ import { useDispatch } from 'react-redux'
 const App = () => {
   const dispatch = useDispatch()
 
-  useEffect(() => dispatch(initialization())) //6.16
+  useEffect(() => {
+    dispatch(initialization())
+  },[]) //6.16
+
 
   return (
     <div>

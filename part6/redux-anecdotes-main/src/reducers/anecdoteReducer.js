@@ -23,6 +23,8 @@ const aneSlice = createSlice({
   }
 })
 
+export const { voting, createAne,setAne, } = aneSlice.actions 
+
 //6.16
 export const initialization = () =>{
   return async (dispatch) => {
@@ -32,6 +34,12 @@ export const initialization = () =>{
   }
 }
 
+//6.17
+export const makeAnecdote = (content) => {
+  return async (dispatch) =>{
+        const newAnecdote = await aneService.create(content)
+        dispatch(createAne(newAnecdote.data))
+  }
+}
 
-export const { voting, createAne,setAne, } = aneSlice.actions 
 export default aneSlice.reducer
