@@ -4,17 +4,13 @@ import Filter from './components/Filter'
 import Notification from './components/Notification'
 
 import { useEffect } from 'react'
-import { setAne } from './reducers/anecdoteReducer'
-import aneService from './services/aneService'
+import { initialization} from './reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
 
 const App = () => {
   const dispatch = useDispatch()
-  useEffect(() => {
-    aneService.getAll()
-    .then(anecdotes => {
-      dispatch(setAne(anecdotes.data))})
-  })
+
+  useEffect(() => dispatch(initialization())) //6.16
 
   return (
     <div>
