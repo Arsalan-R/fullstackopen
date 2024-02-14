@@ -8,18 +8,17 @@ export const getAnecdotes = () => {
 }
 
 export const makeAnecdote = async (newAnecdote) => {
+    if (newAnecdote.content.length > 5){
     newAnecdote.votes = 0
     newAnecdote.id = getId()
     const res = await axios.post(baseUrl, newAnecdote)
     return res.data
-}
-
-export const voteAnecdote = async (anecdote) => {
-    if (anecdote.content > 5){
-    const res = await axios.put(`${baseUrl}/${anecdote.id}`, anecdote)
-    return res.data
-    }
-    else {
+    } else {
         return Promise.reject();
     }
+}
+
+export const voteAnecdote = async (anecdote) => {   
+    const res = await axios.put(`${baseUrl}/${anecdote.id}`, anecdote)
+    return res.data
 }

@@ -26,7 +26,7 @@ const App = () => {
     }
   })
 
-  const handleVote = (anecdote) => {  
+  const handleVote = (anecdote) => {
     newMutation.mutate({...anecdote, votes : anecdote.votes + 1})
      notificationDispatch({
       type: 'SHOW',
