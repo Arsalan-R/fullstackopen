@@ -13,32 +13,30 @@ const [notification, notificationDispatch] = useContext(notificationContext)
   onSuccess: (newAnecdote) => {
     const anecdotes = queryClient.getQueryData(['anecdotes'])
     queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+    notificationDispatch({
+      type: 'SHOW',
+      payload: `You added '${newAnecdote.content}'`
+     })
+     setTimeout(() => {
+      notificationDispatch('HIDE')
+     }, 5000);
+  },
+  onError: () =>{
+    notificationDispatch({
+      type: 'SHOW',
+      payload: `Oops, that's not enough. Anecdotes need to have 6 or more characters.`
+    })
+    setTimeout(() => {
+      notificationDispatch('HIDE')
+     }, 5000);
   }
   })
 
   const onCreate = (event) => {
     event.preventDefault()
-    const content = event.target.anecdote.value
-    if (content.length > 5) {
+    const content = event.target.anecdote.value   
     event.target.anecdote.value = ''
-    newMutation.mutate({content})
-    notificationDispatch({
-      type: 'SHOW',
-      payload: `You added '${content}'`
-     })
-     setTimeout(() => {
-      notificationDispatch('HIDE')
-     }, 5000);
-    }
-    else{
-      notificationDispatch({
-        type: 'SHOW',
-        payload: `Oops, that's not enough. Anecdotes need to have 6 or more characters.`
-      })
-      setTimeout(() => {
-        notificationDispatch('HIDE')
-       }, 5000);
-    }
+    newMutation.mutate({content}) 
 }
 
   return (

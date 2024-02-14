@@ -15,6 +15,11 @@ export const makeAnecdote = async (newAnecdote) => {
 }
 
 export const voteAnecdote = async (anecdote) => {
+    if (anecdote.content > 5){
     const res = await axios.put(`${baseUrl}/${anecdote.id}`, anecdote)
     return res.data
+    }
+    else {
+        return Promise.reject();
+    }
 }
