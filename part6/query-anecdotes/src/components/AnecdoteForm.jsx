@@ -31,7 +31,13 @@ const [notification, notificationDispatch] = useContext(notificationContext)
      }, 5000);
     }
     else{
-      alert('too few charachters')
+      notificationDispatch({
+        type: 'SHOW',
+        payload: `Oops, that's not enough. Anecdotes need to have 6 or more characters.`
+      })
+      setTimeout(() => {
+        notificationDispatch('HIDE')
+       }, 5000);
     }
 }
 
