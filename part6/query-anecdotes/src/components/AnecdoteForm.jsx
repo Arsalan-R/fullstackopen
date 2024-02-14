@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { makeAnecdote } from "../requests"
+import { useContext } from "react"
+import notificationContext from "../notificationContext"
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
+
+const [notification, notificationDispatch] = useContext(notificationContext)
 
   const newMutation = useMutation({
     mutationFn: makeAnecdote,
@@ -18,6 +22,13 @@ const AnecdoteForm = () => {
     if (content.length > 5) {
     event.target.anecdote.value = ''
     newMutation.mutate({content})
+    notificationDispatch({
+      type: 'SHOW',
+      payload: `You added '${content}'`
+     })
+     setTimeout(() => {
+      notificationDispatch('HIDE')
+     }, 5000);
     }
     else{
       alert('too few charachters')
