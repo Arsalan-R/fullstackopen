@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link , useMatch
+  Routes, Route, Link , useMatch , useNavigate
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -49,10 +49,10 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
+  
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -61,7 +61,7 @@ const CreateNew = (props) => {
       author,
       info,
       votes: 0
-    })
+    }) 
   }
 
   return (
@@ -117,9 +117,16 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+  const navigate = useNavigate()
+
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    navigate('/')
+    setNotification(`A new anecdote '${anecdote.content}' was created!`)
+    setTimeout(() => {
+      setNotification('')
+    }, 4000);
   }
 
   const anecdoteById = (id) =>
@@ -145,6 +152,7 @@ const App = () => {
     <>
       <h1>Software anecdotes</h1>
       <Menu />
+      {notification ? notification : null}
       <Routes>
         <Route path='/' element={ <AnecdoteList anecdotes={anecdotes} />}/>
         <Route path='/create' element={<CreateNew addNew={addNew} />} />
