@@ -6,5 +6,5 @@ import { NotificationContextProvider } from "./components/reducer/notificationCo
 ReactDOM.createRoot(document.getElementById("root")).render(
   <NotificationContextProvider>
     <App />
-  </NotificationContextProvider>
+  </NotificationContextProvider>,
 );
