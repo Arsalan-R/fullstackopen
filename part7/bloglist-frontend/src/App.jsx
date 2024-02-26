@@ -4,31 +4,36 @@ import BlogForm from "./components/blogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
 
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    retry: 1
+  })
+
+  const [notification, notificationDispatch] = useContext(notificationContext);
   const [blogs, setBlogs] = useState([]);
+  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [notification, notificationDispatch] = useContext(notificationContext);
-
   useEffect(() => {
-    blogService
-      .getAll()
-      .then((blogs) => {
-        const compareNumbers = (a, b) => {
-          return a.likes - b.likes;
-        };
-        const sortedBlogs = blogs.sort(compareNumbers);
-        setBlogs(sortedBlogs);
-      })
-      .catch((error) => console.log("refreshed before receiving data"));
-  }, []);
+    if (result.data) {
+      const compareVotes = (a,b) => {
+        return a.votes - b.votes
+      }
+      const sortedBlogs = [...result.data].sort(compareVotes)
+      setBlogs(sortedBlogs)
+    }
+  }, [result.data])
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -113,10 +118,10 @@ const App = () => {
     );
   };
 
-  const addBlog = async (blogObject) => {
-    blogFormRef.current.changeVisibility();
-    try {
-      const newBlog = await blogService.create(blogObject);
+  const addBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      blogFormRef.current.changeVisibility();
       const newBlogWithUser = { ...newBlog, user };
       setBlogs(blogs.concat(newBlogWithUser));
 
@@ -127,7 +132,8 @@ const App = () => {
       setTimeout(() => {
         notificationDispatch("HIDE");
       }, 5000);
-    } catch {
+    },
+    onError : () => {
       notificationDispatch({
         type: "ERROR",
         payload: "Something went wrong when posting the blog",
@@ -136,7 +142,11 @@ const App = () => {
         notificationDispatch("HIDE");
       }, 5000);
     }
-  };
+  })
+
+  const addBlog = (content) => {
+    addBlogMutation.mutate(content)
+  }
 
   const likingBlog = async (blogObject) => {
     const { user, id, ...rest } = blogObject;
@@ -216,6 +226,14 @@ const App = () => {
       </div>
     );
   };
+
+  if (result.isLoading) {
+    return <div>blogs are loading...</div>
+  }
+
+  if (result.isError) {
+    return <div>Unfortunately the blogs are currently unavailable due to porblems in server</div>
+  }
 
   return (
     <div>

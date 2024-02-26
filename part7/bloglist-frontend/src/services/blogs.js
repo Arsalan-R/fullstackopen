@@ -4,8 +4,7 @@ const baseUrl = "http://localhost:3003/api/blogs";
 let token = null;
 
 const getAll = () => {
-  const request = axios.get(baseUrl);
-  return request.then((response) => response.data);
+  return axios.get(baseUrl).then(res => res.data)
 };
 
 const setToken = (newToken) => {
