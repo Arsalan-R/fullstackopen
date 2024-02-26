@@ -28,7 +28,7 @@ const App = () => {
   useEffect(() => {
     if (result.data) {
       const compareVotes = (a,b) => {
-        return a.votes - b.votes
+        return a.likes - b.likes
       }
       const sortedBlogs = [...result.data].sort(compareVotes)
       setBlogs(sortedBlogs)
@@ -118,35 +118,6 @@ const App = () => {
     );
   };
 
-  const addBlogMutation = useMutation({
-    mutationFn: blogService.create,
-    onSuccess: (newBlog) => {
-      blogFormRef.current.changeVisibility();
-      const newBlogWithUser = { ...newBlog, user };
-      setBlogs(blogs.concat(newBlogWithUser));
-
-      notificationDispatch({
-        type: "SUCCESS",
-        payload: `A new blog "${newBlog.title}" by "${user.name}" added`,
-      });
-      setTimeout(() => {
-        notificationDispatch("HIDE");
-      }, 5000);
-    },
-    onError : () => {
-      notificationDispatch({
-        type: "ERROR",
-        payload: "Something went wrong when posting the blog",
-      });
-      setTimeout(() => {
-        notificationDispatch("HIDE");
-      }, 5000);
-    }
-  })
-
-  const addBlog = (content) => {
-    addBlogMutation.mutate(content)
-  }
 
   const likingBlog = async (blogObject) => {
     const { user, id, ...rest } = blogObject;
@@ -200,6 +171,11 @@ const App = () => {
   };
 
   const blogFormRef = useRef();
+
+  const toggle = () => {
+    blogFormRef.current.changeVisibility();
+  }
+
   const blogPage = () => {
     return (
       <div>
@@ -212,7 +188,7 @@ const App = () => {
           HideLable={"cancel"}
           ref={blogFormRef}
         >
-          <BlogForm createBlog={addBlog} />
+          <BlogForm toggle={toggle} user={user}/>
         </Toggleable>
         {blogs.map((blog) => (
           <Blog

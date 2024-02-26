@@ -1,15 +1,55 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import PropTypes from "prop-types";
 
-const BlogForm = ({ createBlog }) => {
+import { useMutation } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import blogService from "../services/blogs";
+import notificationContext from "../components/reducer/notificationContext";
+
+const BlogForm = ({toggle, user }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
+  const queryClient = useQueryClient()
+
+  const addBlog = (content) => {
+    addBlogMutation.mutate(content)
+    toggle()
+  }
+
+const [notification, notificationDispatch] = useContext(notificationContext);
+  const addBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => {
+      const blogs = queryClient.getQueryData(['blogs'])
+      const newBlogWithUser = { ...newBlog, user };
+      queryClient.setQueryData(['blogs'], blogs.concat(newBlogWithUser))
+
+      notificationDispatch({
+        type: "SUCCESS",
+        payload: `A new blog "${newBlog.title}" by "${user.name}" added`,
+      });
+      setTimeout(() => {
+        notificationDispatch("HIDE");
+      }, 5000);
+    },
+    onError : () => {
+      notificationDispatch({
+        type: "ERROR",
+        payload: "Something went wrong when posting the blog",
+      });
+      setTimeout(() => {
+        notificationDispatch("HIDE");
+      }, 5000);
+    }
+  })
+
   const AddBlog = async (event) => {
     event.preventDefault();
 
-    createBlog({
+    addBlog({
       title,
       author,
       url,
@@ -66,7 +106,5 @@ const BlogForm = ({ createBlog }) => {
     </div>
   );
 };
-
-BlogForm.propTypes = { createBlog: PropTypes.func.isRequired };
 
 export default BlogForm;
