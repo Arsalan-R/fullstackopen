@@ -12,12 +12,11 @@ import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 
 const App = () => {
-
   const result = useQuery({
-    queryKey: ['blogs'],
+    queryKey: ["blogs"],
     queryFn: blogService.getAll,
-    retry: 1
-  })
+    retry: 1,
+  });
 
   const [notification, notificationDispatch] = useContext(notificationContext);
   const [blogs, setBlogs] = useState([]);
@@ -27,13 +26,13 @@ const App = () => {
 
   useEffect(() => {
     if (result.data) {
-      const compareVotes = (a,b) => {
-        return a.likes - b.likes
-      }
-      const sortedBlogs = [...result.data].sort(compareVotes)
-      setBlogs(sortedBlogs)
+      const compareVotes = (a, b) => {
+        return a.likes - b.likes;
+      };
+      const sortedBlogs = [...result.data].sort(compareVotes);
+      setBlogs(sortedBlogs);
     }
-  }, [result.data])
+  }, [result.data]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -118,7 +117,6 @@ const App = () => {
     );
   };
 
-
   const likingBlog = async (blogObject) => {
     const { user, id, ...rest } = blogObject;
     const newBlogObject = rest;
@@ -174,7 +172,7 @@ const App = () => {
 
   const toggle = () => {
     blogFormRef.current.changeVisibility();
-  }
+  };
 
   const blogPage = () => {
     return (
@@ -188,7 +186,7 @@ const App = () => {
           HideLable={"cancel"}
           ref={blogFormRef}
         >
-          <BlogForm toggle={toggle} user={user}/>
+          <BlogForm toggle={toggle} user={user} />
         </Toggleable>
         {blogs.map((blog) => (
           <Blog
@@ -204,11 +202,16 @@ const App = () => {
   };
 
   if (result.isLoading) {
-    return <div>blogs are loading...</div>
+    return <div>blogs are loading...</div>;
   }
 
   if (result.isError) {
-    return <div>Unfortunately the blogs are currently unavailable due to porblems in server</div>
+    return (
+      <div>
+        Unfortunately the blogs are currently unavailable due to porblems in
+        server
+      </div>
+    );
   }
 
   return (

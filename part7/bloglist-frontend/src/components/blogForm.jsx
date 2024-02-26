@@ -7,25 +7,25 @@ import { useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import notificationContext from "../components/reducer/notificationContext";
 
-const BlogForm = ({toggle, user }) => {
+const BlogForm = ({ toggle, user }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const addBlog = (content) => {
-    addBlogMutation.mutate(content)
-    toggle()
-  }
+    addBlogMutation.mutate(content);
+    toggle();
+  };
 
-const [notification, notificationDispatch] = useContext(notificationContext);
+  const [notification, notificationDispatch] = useContext(notificationContext);
   const addBlogMutation = useMutation({
     mutationFn: blogService.create,
     onSuccess: (newBlog) => {
-      const blogs = queryClient.getQueryData(['blogs'])
+      const blogs = queryClient.getQueryData(["blogs"]);
       const newBlogWithUser = { ...newBlog, user };
-      queryClient.setQueryData(['blogs'], blogs.concat(newBlogWithUser))
+      queryClient.setQueryData(["blogs"], blogs.concat(newBlogWithUser));
 
       notificationDispatch({
         type: "SUCCESS",
@@ -35,7 +35,7 @@ const [notification, notificationDispatch] = useContext(notificationContext);
         notificationDispatch("HIDE");
       }, 5000);
     },
-    onError : () => {
+    onError: () => {
       notificationDispatch({
         type: "ERROR",
         payload: "Something went wrong when posting the blog",
@@ -43,8 +43,8 @@ const [notification, notificationDispatch] = useContext(notificationContext);
       setTimeout(() => {
         notificationDispatch("HIDE");
       }, 5000);
-    }
-  })
+    },
+  });
 
   const AddBlog = async (event) => {
     event.preventDefault();
