@@ -25,9 +25,9 @@ const Blog = ({ blog, likeBlog, username }) => {
 
   const [notification, notificationDispatch] = useContext(notificationContext);
   const deleteMutation = useMutation({
-    mutationFn : blogService.deleteBlog,
-    onSuccess : (deletedBlog) => {
-      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    mutationFn: blogService.deleteBlog,
+    onSuccess: (deletedBlog) => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
       notificationDispatch({
         type: "SUCCESS",
         payload: "Successfully removed the blog!",
@@ -36,7 +36,7 @@ const Blog = ({ blog, likeBlog, username }) => {
         notificationDispatch("HIDE");
       }, 5000);
     },
-    onError : () => {
+    onError: () => {
       notificationDispatch({
         type: "ERROR",
         payload: "You are not authorized to delete this blog",
@@ -44,18 +44,18 @@ const Blog = ({ blog, likeBlog, username }) => {
       setTimeout(() => {
         notificationDispatch("HIDE");
       }, 5000);
-    }
-  })
+    },
+  });
 
   const removeBlog = (blogObject) => {
-    if(
+    if (
       window.confirm(
         `Remove blog ${blogObject.title} by ${blogObject.user.name}`,
       )
-    ){
-      deleteMutation.mutate(blogObject)
+    ) {
+      deleteMutation.mutate(blogObject);
     }
-  }
+  };
 
   return (
     <div className="blog">

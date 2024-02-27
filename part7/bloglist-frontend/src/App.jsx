@@ -141,11 +141,6 @@ const App = () => {
     setBlogs(sortedBlogs);
   };
 
-
-  
-
-
-
   const blogFormRef = useRef();
 
   const toggle = () => {
