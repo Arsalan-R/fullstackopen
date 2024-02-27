@@ -10,6 +10,7 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
+import UserContext from "./components/reducer/userContext";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -19,10 +20,9 @@ const App = () => {
     queryFn: blogService.getAll,
     retry: 1,
   });
-
+  const [user, userDispatch] = useContext(UserContext)
   const [notification, notificationDispatch] = useContext(notificationContext);
   const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -45,7 +45,10 @@ const App = () => {
       });
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      setUser(user);
+      userDispatch({
+        type: 'LOGIN',
+      payload: user,
+      })
       setUsername("");
       setPassword("");
 
@@ -71,14 +74,17 @@ const App = () => {
     const loggedUser = window.localStorage.getItem("loggedInUser");
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
-      setUser(user);
+      userDispatch({
+        type: 'LOGIN',
+      payload: user,
+      })
       blogService.setToken(user.token);
     }
   }, []);
 
   const logout = () => {
     window.localStorage.removeItem("loggedInUser");
-    setUser(null);
+    userDispatch('LOGOUT')
     notificationDispatch({
       type: "SUCCESS",
       payload: "Logged out",
@@ -152,7 +158,7 @@ const App = () => {
       <div>
         <h2>blogs</h2>
         <div>
-          {user.username} is logged in <button onClick={logout}>Logout</button>
+          {user && user.username} is logged in <button onClick={logout}>Logout</button>
         </div>
         <Toggleable
           buttonLable={"New blog"}
@@ -166,7 +172,7 @@ const App = () => {
             key={blog.id}
             blog={blog}
             likeBlog={likingBlog}
-            username={user.username}
+            username={user && user.username}
           />
         ))}
       </div>
