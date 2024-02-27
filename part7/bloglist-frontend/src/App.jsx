@@ -12,6 +12,8 @@ import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 
 const App = () => {
+  const queryClient = useQueryClient();
+
   const result = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
@@ -139,34 +141,44 @@ const App = () => {
     setBlogs(sortedBlogs);
   };
 
-  const deletingBlog = async (blogObject) => {
-    if (
+
+  const deleteMutation = useMutation({
+    mutationFn : blogService.deleteBlog,
+    onSuccess : (deletedBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      //queryClient.setQueryData(["blogs"], blogs.filter((blog) => blog.id !== deletedBlog.id))
+      const newBlogs = blogs.filter((blog) => blog.id !== deletedBlog.id)
+      setBlogs(newBlogs)
+      notificationDispatch({
+        type: "SUCCESS",
+        payload: "Successfully removed the blog!",
+      });
+      setTimeout(() => {
+        notificationDispatch("HIDE");
+      }, 5000);
+    },
+    onError : () => {
+      notificationDispatch({
+        type: "ERROR",
+        payload: "You are not authorized to delete this blog",
+      });
+      setTimeout(() => {
+        notificationDispatch("HIDE");
+      }, 5000);
+    }
+  })
+
+  const deletingBlog = (blogObject) => {
+    if(
       window.confirm(
         `Remove blog ${blogObject.title} by ${blogObject.user.name}`,
       )
-    ) {
-      try {
-        await blogService.deleteBlog(blogObject);
-        setBlogs(blogs.filter((blog) => blog.id !== blogObject.id));
-
-        notificationDispatch({
-          type: "SUCCESS",
-          payload: "Successfully removed the blog!",
-        });
-        setTimeout(() => {
-          notificationDispatch("HIDE");
-        }, 5000);
-      } catch {
-        notificationDispatch({
-          type: "ERROR",
-          payload: "You are not authorized to delete this blog",
-        });
-        setTimeout(() => {
-          notificationDispatch("HIDE");
-        }, 5000);
-      }
+    ){
+      deleteMutation.mutate(blogObject)
     }
-  };
+  }
+
+
 
   const blogFormRef = useRef();
 
