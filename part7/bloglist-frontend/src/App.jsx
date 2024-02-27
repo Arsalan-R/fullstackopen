@@ -3,6 +3,7 @@ import Blog from "./components/Blog";
 import BlogForm from "./components/blogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
+import User from "./components/User";
 
 import {
   BrowserRouter as Router,
@@ -27,19 +28,8 @@ const App = () => {
   });
   const [user, userDispatch] = useContext(UserContext)
   const [notification, notificationDispatch] = useContext(notificationContext);
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (result.data) {
-      const compareVotes = (a, b) => {
-        return a.likes - b.likes;
-      };
-      const sortedBlogs = [...result.data].sort(compareVotes);
-      setBlogs(sortedBlogs);
-    }
-  }, [result.data]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -135,9 +125,11 @@ const App = () => {
     const newBlogObject = rest;
     const likedData = await blogService.update(newBlogObject, id);
     const liked = { ...likedData, user, id };
+    const blogs = queryClient.getQueryData(["blogs"]);
     const newBlogs = blogs.map((blog) =>
       blog.id === blogObject.id ? (blog = liked) : blog,
     );
+    queryClient.setQueryData(["blogs"], newBlogs);
     notificationDispatch({
       type: "SUCCESS",
       payload: `You liked '${likedData.title}'`,
@@ -145,11 +137,6 @@ const App = () => {
     setTimeout(() => {
       notificationDispatch("HIDE");
     }, 5000);
-    const compareNumbers = (a, b) => {
-      return a.likes - b.likes;
-    };
-    const sortedBlogs = newBlogs.sort(compareNumbers); //live update for the likes
-    setBlogs(sortedBlogs);
   };
 
   const blogFormRef = useRef();
@@ -193,16 +180,25 @@ const App = () => {
     );
   }
 
+  const compareNumbers = (a, b) => {
+    return a.likes - b.likes;
+  };
+
+  const sortedBlogs = result.data.sort(compareNumbers); //live update for the likes
+
+  const blogs = sortedBlogs
+
   return (
     <Router>
       <Notification />
       <h2>blogs</h2>
         <div>
-          {user && user.username} is logged in <button onClick={logout}>Logout</button>
+          {user && user.username} is logged in
         </div>
+        <button onClick={logout}>Logout</button>
     <Routes>
       <Route path="/" element={user === null ? loginPage() : blogPage()} />
-      <Route path="/users" element={<div>hi</div>} />
+      <Route path="/users" element={<User blogs={blogs}/>}/>
       </Routes>
     </Router>
   );
