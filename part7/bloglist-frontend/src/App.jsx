@@ -5,13 +5,12 @@ import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
 import User from "./components/User";
 import NotExist from './components/notExist'
+import axios from "axios";
+import SelectedUser from "./components/selectedUser";
 
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link
-} from 'react-router-dom'
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom'
 
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -21,6 +20,11 @@ import UserContext from "./components/reducer/userContext";
 
 const App = () => {
   const queryClient = useQueryClient();
+
+  const userRes = useQuery({
+    queryKey: ['users'],
+    queryFn: () => axios.get('http://localhost:3003/api/users').then(res => res.data)
+  })
 
   const result = useQuery({
     queryKey: ["blogs"],
@@ -149,10 +153,6 @@ const App = () => {
   const blogPage = () => {
     return (
       <div>
-        <div>
-          {user && user.username} is logged in
-        </div>
-        <button onClick={logout}>Logout</button>
         <Toggleable
           buttonLable={"New blog"}
           HideLable={"cancel"}
@@ -185,6 +185,21 @@ const App = () => {
     );
   }
 
+  if (userRes.isLoading) {
+    return <div>blogs are loading...</div>;
+  }
+
+  if (userRes.isError) {
+    return (
+      <div>
+        Unfortunately the blogs are currently unavailable due to porblems in
+        server
+      </div>
+    );
+  }
+
+  const users = userRes.data
+
   const compareNumbers = (a, b) => {
     return a.likes - b.likes;
   };
@@ -194,16 +209,23 @@ const App = () => {
   const blogs = sortedBlogs
 
   return (
-    <Router>
+      <Router>
       <Notification />
       <h2>blogs</h2>
+      {user
+      ? <div>
+        <div>
+          {user && user.username} is logged in
+        </div>
+        <button onClick={logout}>Logout</button>
+      </div> : null }
     <Routes>
       <Route path="/" element={user ? blogPage() : loginPage()} />
-      <Route path="/users" element={<User blogs={blogs}/>}/>
+      <Route path="/users/:id" element={<SelectedUser users={users} />} />
+      <Route path="/users" element={<User users={users} />}/>
       <Route path='*' element={<NotExist />} />
-      <Route path="/users/:id" element={<div>placeholder</div>} />
       </Routes>
-    </Router>
+      </Router>
   );
 };
 

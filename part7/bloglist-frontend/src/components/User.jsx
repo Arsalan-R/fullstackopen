@@ -1,17 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
-const User = ({ blogs }) => {
+import { Link } from "react-router-dom"
 
-    const result = useQuery({
-        queryKey: ['notes'],
-        queryFn: () => axios.get('http://localhost:3003/api/users').then(res => res.data)
-      })
-
-      if ( result.isLoading ) {
-        return <div>loading data...</div>
-      }
-
-      const users = result.data
+const User = ( { users } ) => {
 
     return(
       <>
@@ -24,7 +13,7 @@ const User = ({ blogs }) => {
                 </tr>
                 {users.map(user => (
                 <tr key={user.id}>
-                    <td>{user.username}</td>
+                    <td><Link to={`${user.id}`} > {user.username} </Link></td>
                     <td className='rightTD'>{user.blogs?.length || 0}</td>
                 </tr>
                 ))}
