@@ -148,6 +148,10 @@ const App = () => {
   const blogPage = () => {
     return (
       <div>
+        <div>
+          {user && user.username} is logged in
+        </div>
+        <button onClick={logout}>Logout</button>
         <Toggleable
           buttonLable={"New blog"}
           HideLable={"cancel"}
@@ -192,13 +196,10 @@ const App = () => {
     <Router>
       <Notification />
       <h2>blogs</h2>
-        <div>
-          {user && user.username} is logged in
-        </div>
-        <button onClick={logout}>Logout</button>
     <Routes>
-      <Route path="/" element={user === null ? loginPage() : blogPage()} />
+      <Route path="/" element={user ? blogPage() : loginPage()} />
       <Route path="/users" element={<User blogs={blogs}/>}/>
+      <Route path='*' element={<div>Sorry, the page you are looking for does not exist</div>} />
       </Routes>
     </Router>
   );
