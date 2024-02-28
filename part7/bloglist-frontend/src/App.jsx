@@ -4,9 +4,6 @@ import BlogForm from "./components/blogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
 import User from "./components/User";
-import NotExist from './components/notExist'
-import axios from "axios";
-import SelectedUser from "./components/selectedUser";
 
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom'
 
@@ -221,9 +218,8 @@ const App = () => {
       </div> : null }
     <Routes>
       <Route path="/" element={user ? blogPage() : loginPage()} />
-      <Route path="/users/:id" element={<SelectedUser users={users} />} />
-      <Route path="/users" element={<User users={users} />}/>
-      <Route path='*' element={<NotExist />} />
+      <Route path="/users" element={<User blogs={blogs}/>}/>
+      <Route path='*' element={<div>Sorry, the page you are looking for does not exist</div>} />
       </Routes>
       </Router>
   );
