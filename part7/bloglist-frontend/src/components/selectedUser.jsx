@@ -1,22 +1,24 @@
 import { useParams } from "react-router-dom";
 
-const SelectedUser = ( { users } ) => {
-const id = useParams().id
-const user = users.find(user => user.id === id)
-console.log(user);
-if (!user) {
-    return null
-}
+const SelectedUser = ({ users }) => {
+  const id = useParams().id;
+  const user = users.find((user) => user.id === id);
+  console.log(user);
+  if (!user) {
+    return null;
+  }
 
-return(
+  return (
     <div>
-        <h2>{user.name}</h2>
-        <h4>Added blogs</h4>
-        <ul>
-            {user.blogs.map(blog => <li key={blog.id}> {blog.title} </li>)}
-        </ul>
+      <h2>{user.name}</h2>
+      <h4>Added blogs</h4>
+      <ul>
+        {user.blogs.map((blog) => (
+          <li key={blog.id}> {blog.title} </li>
+        ))}
+      </ul>
     </div>
-)
-}
+  );
+};
 
-export default SelectedUser
+export default SelectedUser;

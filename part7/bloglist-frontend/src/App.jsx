@@ -4,11 +4,11 @@ import BlogForm from "./components/blogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
 import User from "./components/User";
-import NotExist from './components/notExist'
+import NotExist from "./components/notExist";
 import axios from "axios";
 import SelectedUser from "./components/selectedUser";
 
-import { Routes, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -22,16 +22,17 @@ const App = () => {
   const queryClient = useQueryClient();
 
   const userRes = useQuery({
-    queryKey: ['users'],
-    queryFn: () => axios.get('http://localhost:3003/api/users').then(res => res.data)
-  })
+    queryKey: ["users"],
+    queryFn: () =>
+      axios.get("http://localhost:3003/api/users").then((res) => res.data),
+  });
 
   const result = useQuery({
     queryKey: ["blogs"],
     queryFn: blogService.getAll,
     retry: 1,
   });
-  const [user, userDispatch] = useContext(UserContext)
+  const [user, userDispatch] = useContext(UserContext);
   const [notification, notificationDispatch] = useContext(notificationContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -46,9 +47,9 @@ const App = () => {
       window.localStorage.setItem("loggedInUser", JSON.stringify(user));
       blogService.setToken(user.token);
       userDispatch({
-        type: 'LOGIN',
-      payload: user,
-      })
+        type: "LOGIN",
+        payload: user,
+      });
       setUsername("");
       setPassword("");
 
@@ -75,16 +76,16 @@ const App = () => {
     if (loggedUser) {
       const user = JSON.parse(loggedUser);
       userDispatch({
-        type: 'LOGIN',
-      payload: user,
-      })
+        type: "LOGIN",
+        payload: user,
+      });
       blogService.setToken(user.token);
     }
   }, []);
 
   const logout = () => {
     window.localStorage.removeItem("loggedInUser");
-    userDispatch('LOGOUT')
+    userDispatch("LOGOUT");
     notificationDispatch({
       type: "SUCCESS",
       payload: "Logged out",
@@ -198,7 +199,7 @@ const App = () => {
     );
   }
 
-  const users = userRes.data
+  const users = userRes.data;
 
   const compareNumbers = (a, b) => {
     return a.likes - b.likes;
@@ -206,26 +207,25 @@ const App = () => {
 
   const sortedBlogs = result.data.sort(compareNumbers); //live update for the likes
 
-  const blogs = sortedBlogs
+  const blogs = sortedBlogs;
 
   return (
-      <Router>
+    <Router>
       <Notification />
       <h2>blogs</h2>
-      {user
-      ? <div>
+      {user ? (
         <div>
-          {user && user.username} is logged in
+          <div>{user && user.username} is logged in</div>
+          <button onClick={logout}>Logout</button>
         </div>
-        <button onClick={logout}>Logout</button>
-      </div> : null }
-    <Routes>
-      <Route path="/" element={user ? blogPage() : loginPage()} />
-      <Route path="/users/:id" element={<SelectedUser users={users} />} />
-      <Route path="/users" element={<User users={users} />}/>
-      <Route path='*' element={<NotExist />} />
+      ) : null}
+      <Routes>
+        <Route path="/" element={user ? blogPage() : loginPage()} />
+        <Route path="/users/:id" element={<SelectedUser users={users} />} />
+        <Route path="/users" element={<User users={users} />} />
+        <Route path="*" element={<NotExist />} />
       </Routes>
-      </Router>
+    </Router>
   );
 };
 

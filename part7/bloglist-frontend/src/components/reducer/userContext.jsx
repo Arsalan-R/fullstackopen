@@ -3,19 +3,16 @@ import { createContext, useReducer } from "react";
 const userReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      return state = action.payload
+      return (state = action.payload);
     case "LOGOUT":
-      return state = null;
+      return (state = null);
   }
 };
 
 const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
-  const [user, userDispatch] = useReducer(
-    userReducer,
-    null,
-  );
+  const [user, userDispatch] = useReducer(userReducer, null);
 
   return (
     <UserContext.Provider value={[user, userDispatch]}>
