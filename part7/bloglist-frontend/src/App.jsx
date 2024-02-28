@@ -4,6 +4,7 @@ import BlogForm from "./components/blogForm";
 import Toggleable from "./components/Toggleable";
 import Notification from "./components/notifications";
 import User from "./components/User";
+import NotExist from './components/notExist'
 
 import {
   BrowserRouter as Router,
@@ -199,7 +200,8 @@ const App = () => {
     <Routes>
       <Route path="/" element={user ? blogPage() : loginPage()} />
       <Route path="/users" element={<User blogs={blogs}/>}/>
-      <Route path='*' element={<div>Sorry, the page you are looking for does not exist</div>} />
+      <Route path='*' element={<NotExist />} />
+      <Route path="/users/:id" element={<div>placeholder</div>} />
       </Routes>
     </Router>
   );
