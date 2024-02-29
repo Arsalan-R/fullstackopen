@@ -8,7 +8,7 @@ import NotExist from "./components/notExist";
 import axios from "axios";
 import SelectedUser from "./components/selectedUser";
 
-import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -18,8 +18,10 @@ import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 import UserContext from "./components/reducer/userContext";
 import SelectedBlog from "./components/selectedBlog";
+import Menu from "./components/menu";
 
 const App = () => {
+  const navigate = useNavigate()
   const queryClient = useQueryClient();
 
   const userRes = useQuery({
@@ -53,7 +55,7 @@ const App = () => {
       });
       setUsername("");
       setPassword("");
-
+      navigate('/blogs')
       notificationDispatch({
         type: "SUCCESS",
         payload: "successfully logged in",
@@ -155,13 +157,17 @@ const App = () => {
   const blogPage = () => {
     return (
       <div>
+        {user ?
         <Toggleable
-          buttonLable={"New blog"}
-          HideLable={"cancel"}
-          ref={blogFormRef}
-        >
-          <BlogForm toggle={toggle} user={user} />
-        </Toggleable>
+        buttonLable={"New blog"}
+        HideLable={"cancel"}
+        ref={blogFormRef}
+      >
+        <BlogForm toggle={toggle} user={user} />
+      </Toggleable>
+      : <p>Please log in order to make blogs!</p>
+      }
+
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
@@ -211,23 +217,20 @@ const App = () => {
   const blogs = sortedBlogs;
 
   return (
-    <Router>
+    <>
+      <Menu username={user && user.username} user={user && user.username} logout={logout} />
       <Notification />
       <h2>blogs</h2>
-      {user ? (
-        <div>
-          <div>{user && user.username} is logged in</div>
-          <button onClick={logout}>Logout</button>
-        </div>
-      ) : null}
       <Routes>
-        <Route path="/" element={user ? blogPage() : loginPage()} />
+        <Route path="/" element={<Navigate replace to={'/blogs'} />} />
+        <Route path="/login" element={user ? <Navigate replace to={'/blogs'}/> : loginPage() } />
         <Route path="/blogs/:id" element={<SelectedBlog likeBlog={likingBlog} username={user && user.username} blogs={blogs}/>} />
+        <Route path="/blogs" element={blogPage()} />
         <Route path="/users/:id" element={<SelectedUser users={users} />} />
         <Route path="/users" element={<User users={users} />} />
         <Route path="*" element={<NotExist />} />
       </Routes>
-    </Router>
+    </>
   );
 };
 

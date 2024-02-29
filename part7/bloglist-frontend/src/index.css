@@ -35,3 +35,11 @@
 .rightTD {
   padding-left: 5em;
 }
+
+.menu {
+  background-color: rgb(214, 214, 214);
+}
+
+.menuItem {
+  padding: 5px;
+}
