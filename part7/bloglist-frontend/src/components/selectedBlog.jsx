@@ -1,12 +1,12 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import notificationContext from "../components/reducer/notificationContext";
-import { useState } from "react";
 
-const SelectedBlog = ({  likeBlog, username, blogs }) => {
+const SelectedBlog = ({ likeBlog, username, blogs }) => {
+  const navigate = useNavigate()
     const id = useParams().id
     const blog = blogs.find(blog => blog.id === id)
 
@@ -48,13 +48,15 @@ const SelectedBlog = ({  likeBlog, username, blogs }) => {
         ) {
           deleteMutation.mutate(blogObject);
         }
+        navigate('/')
       };
 
     return (
-        <div className="blog">
-            <div>url: {blog.url}</div>
+        <div>
+          <h2>{blog.title}</h2>
+            <div>{blog.url}</div>
             <div>
-              likes: {blog.likes}{" "}
+            {blog.likes} likes {" "}
               <button id="like" onClick={() => addlike(blog)}>
                 like
               </button>

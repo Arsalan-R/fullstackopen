@@ -17,6 +17,7 @@ import loginService from "./services/login";
 import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 import UserContext from "./components/reducer/userContext";
+import SelectedBlog from "./components/selectedBlog";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -221,7 +222,7 @@ const App = () => {
       ) : null}
       <Routes>
         <Route path="/" element={user ? blogPage() : loginPage()} />
-        <Route path="/blogs/:id" element={<div>here</div>} />
+        <Route path="/blogs/:id" element={<SelectedBlog likeBlog={likingBlog} username={user && user.username} blogs={blogs}/>} />
         <Route path="/users/:id" element={<SelectedUser users={users} />} />
         <Route path="/users" element={<User users={users} />} />
         <Route path="*" element={<NotExist />} />
