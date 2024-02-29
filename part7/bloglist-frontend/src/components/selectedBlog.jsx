@@ -50,7 +50,7 @@ const SelectedBlog = ({ likeBlog, username, blogs }) => {
         }
         navigate('/')
       };
-
+      const comments = blog.comments
     return (
         <div>
           <h2>{blog.title}</h2>
@@ -65,6 +65,13 @@ const SelectedBlog = ({ likeBlog, username, blogs }) => {
             {username === blog.user.username ? (
               <button onClick={() => removeBlog(blog)}>Remove</button>
             ) : null}
+            <div>
+              <h2>Comments</h2>
+              <ul>
+              {comments.map((comment) => (
+                  <li key={comment && comment}>{comment && comment}</li>) //TO DO add key
+              )}</ul>
+            </div>
         </div>
       );
 
