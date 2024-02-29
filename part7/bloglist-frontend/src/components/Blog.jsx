@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-
+import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -60,7 +60,7 @@ const Blog = ({ blog, likeBlog, username }) => {
   return (
     <div className="blog">
       <div className="title">
-        {blog.title} {blog.author}{" "}
+        <Link to={`/blogs/${blog.id}`} > {blog.title} {blog.author}{" "} </Link>
         <button onClick={changeVisibility}>{buttonLable}</button>
       </div>
       <div style={hideOrShow} className="moreInfo">

@@ -221,6 +221,7 @@ const App = () => {
       ) : null}
       <Routes>
         <Route path="/" element={user ? blogPage() : loginPage()} />
+        <Route path="/blogs/:id" element={<div>here</div>} />
         <Route path="/users/:id" element={<SelectedUser users={users} />} />
         <Route path="/users" element={<User users={users} />} />
         <Route path="*" element={<NotExist />} />
