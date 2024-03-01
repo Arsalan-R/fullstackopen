@@ -4,11 +4,9 @@ import { useContext, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import notificationContext from "../components/reducer/notificationContext";
-import axios from "axios";
 
 const SelectedBlog = ({ likeBlog, username, blogs }) => {
   const [newComment , setComment] = useState('')
-  const [comments, setComments] = useState([])
   const navigate = useNavigate()
     const id = useParams().id
     const blog = blogs.find(blog => blog.id === id)
@@ -54,22 +52,40 @@ const SelectedBlog = ({ likeBlog, username, blogs }) => {
         navigate('/')
       };
 
+      const commentMutation = useMutation({
+        mutationFn: blogService.addComment,
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["blogs"] });
+          notificationDispatch({
+            type: "SUCCESS",
+            payload: "Successfully added the comment!",
+          });
+          setTimeout(() => {
+            notificationDispatch("HIDE");
+          }, 5000);
+        },
+        onError: () => {
+          notificationDispatch({
+            type: "ERROR",
+            payload: "unfortunately could not add the comment",
+          });
+          setTimeout(() => {
+            notificationDispatch("HIDE");
+          }, 5000);
+        }
+      })
+
       const addComment = (event) => {
         event.preventDefault();
         const comment = {
           content : newComment,
           id : blog.id
         }
-        const newComments = comments.concat(newComment)
-        blogService.addComment(comment).then(result => {
-          setComments(newComments)
-        }).catch(e => console.log('something went wrong'))
+        commentMutation.mutate(comment)
         setComment("");
       }
 
-      useEffect(() => {
-       setComments(blog.comments)
-      }, [blog.comments]);
+      const comments = blog.comments
 
     return (
         <div>
@@ -93,7 +109,7 @@ const SelectedBlog = ({ likeBlog, username, blogs }) => {
               </form>
               <ul>
               {comments.map((comment) => (
-                  <li key={comment && comment}>{comment && comment}</li>) //TO DO add key
+                  <li key={comment && `${comment}${Math.random()}`}>{comment && comment}</li>)
               )}</ul>
             </div>
         </div>
