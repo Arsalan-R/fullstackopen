@@ -1,14 +1,17 @@
 import notificationContext from "./reducer/notificationContext";
 import { useContext } from "react";
+import Alert from '@mui/material/Alert';
 
 const Notification = ({ type }) => {
   const [notification, notificationDispatch] = useContext(notificationContext);
 
   if (!notification) return null;
 
-  const className = notification.type === "success" ? "success" : "error";
+  const severity = notification.type === "success" ? "success" : "error";
 
-  return <div className={className}>{notification.message}</div>;
+  return (
+  <Alert severity={severity}>{notification.message}</Alert>
+  )
 };
 
 export default Notification;

@@ -1,15 +1,34 @@
 import { Link } from "react-router-dom";
+import Button from '@mui/material/Button';
 
-const Menu = ({ user, logout, username }) => {
+const FadeMenu = ({ user, logout, username }) => {
+
 
     return (
         <div className="menu">
-            <Link to={'/blogs'} className="menuItem" >Blogs</Link>
-            <Link to={'/users'} className="menuItem" >Users</Link>
-            {user ? ( <span> {username} is logged in <button onClick={logout}>Logout</button> </span> )
-            : <Link to={'/login'} >Log in</Link> }
+            <Button
+        id="fade-button"
+        aria-controls={open ? 'fade-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+      >
+        <Link to={'/blogs'} className="menuItem" style={{ textDecoration: 'none' }} >Blogs</Link>
+      </Button>
+      <Button id="fade-button" >
+        <Link to={'/users'} className="menuItem" style={{ textDecoration: 'none' }} >Users</Link>
+      </Button>
+            {user ? ( <span> {username} is logged in <Button id="fade-button" onClick={logout}>Logout</Button> </span> )
+            :<Button
+            id="fade-button"
+            aria-controls={open ? 'fade-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+        >
+                <Link to={'/login'} style={{ textDecoration: 'none' }} >Log in</Link>
+            </Button>
+            }
         </div>
     )
 }
 
-export default Menu
+export default FadeMenu

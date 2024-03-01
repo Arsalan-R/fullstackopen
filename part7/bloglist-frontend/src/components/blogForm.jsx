@@ -1,12 +1,11 @@
 import { useRef, useState } from "react";
-import PropTypes from "prop-types";
-
+import { TextField } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import blogService from "../services/blogs";
 import notificationContext from "../components/reducer/notificationContext";
-
+import Button from '@mui/material/Button';
 const BlogForm = ({ toggle, user }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
@@ -58,17 +57,18 @@ const BlogForm = ({ toggle, user }) => {
     setAuthor("");
     setUrl("");
   };
-
   return (
     <div>
       <h2>Create new</h2>
       <form onSubmit={AddBlog}>
         <div>
-          <input
+          <TextField
             type="text"
             value={title}
             name="title"
-            id="title"
+            id="title outlined-multiline-flexible"
+            multiline
+            maxRows={4}
             onChange={({ target }) => setTitle(target.value)}
             className="title"
             placeholder="title"
@@ -76,7 +76,9 @@ const BlogForm = ({ toggle, user }) => {
           />
         </div>
         <div>
-          <input
+          <TextField
+            multiline
+            maxRows={4}
             type="text"
             value={author}
             name="author"
@@ -87,7 +89,10 @@ const BlogForm = ({ toggle, user }) => {
           />
         </div>
         <div>
-          <input
+          <TextField
+            id="outlined-multiline-flexible"
+            multiline
+            maxRows={4}
             type="text"
             value={url}
             name="url"
@@ -98,9 +103,9 @@ const BlogForm = ({ toggle, user }) => {
           />
         </div>
         <div>
-          <button type="submit" className="create">
+          <Button variant="contained" type="submit" className="create">
             Create
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -7,7 +7,7 @@ import User from "./components/User";
 import NotExist from "./components/notExist";
 import axios from "axios";
 import SelectedUser from "./components/selectedUser";
-
+import { Container } from '@mui/material'
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ import { useContext } from "react";
 import notificationContext from "./components/reducer/notificationContext";
 import UserContext from "./components/reducer/userContext";
 import SelectedBlog from "./components/selectedBlog";
-import Menu from "./components/menu";
+import FadeMenu from "./components/menu";
 
 const App = () => {
   const navigate = useNavigate()
@@ -217,8 +217,8 @@ const App = () => {
   const blogs = sortedBlogs;
 
   return (
-    <>
-      <Menu username={user && user.username} user={user && user.username} logout={logout} />
+    <Container maxWidth={false}>
+      <FadeMenu username={user && user.username} user={user && user.username} logout={logout} />
       <Notification />
       <h2>blogs</h2>
       <Routes>
@@ -230,7 +230,7 @@ const App = () => {
         <Route path="/users" element={<User users={users} />} />
         <Route path="*" element={<NotExist />} />
       </Routes>
-    </>
+      </Container>
   );
 };
 
